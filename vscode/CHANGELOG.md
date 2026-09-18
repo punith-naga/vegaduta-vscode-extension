@@ -12,6 +12,25 @@ packaged as `.vsix` but never published to the Marketplace.
 
 Nothing yet.
 
+## [0.5.1] - 2026-09-18
+
+### Changed
+
+- **Getting a free on-device model is one obvious click.** The home card now
+  says "Download lightest · 880 MB" (or "Start it" once downloaded) next to
+  "Choose a model", and names the model plainly ("Llama 3.2 1B") instead of an
+  internal id. One click picks a model already on this machine, otherwise the
+  lightest one it can run - not a bigger "recommended" one.
+- The model list opens with a "New here? Start with the lightest model" step,
+  then lists models lightest-first.
+- **No more dead ends.** Where this window can't run models itself (no
+  WebGPU), the panel shows "Get free on-device AI in 3 steps" with a Show me
+  how button instead of "cannot run". Every model list ends with a "Want a more
+  powerful model?" guide: memory needed for 3B/7B models, and how to run the
+  strongest ones with Ollama, which VegaDūta then finds by itself.
+- **Ask AI about this** (Instant tools) leaves the cursor on a "My question:"
+  line, so the AI answers what you want to know instead of restating the result.
+
 ## [0.5.0] - 2026-09-18
 
 ### Changed
