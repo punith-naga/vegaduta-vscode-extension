@@ -2,7 +2,7 @@
   "name": "vegaduta-vscode",
   "displayName": "VegaDuta",
   "description": "Free AI coding help that runs on your own machine - chat, inline completions, Explain/Fix/Refactor, code review, commit messages and a coding agent - with no account and no quota. Sign in to add your VegaDuta workspace's hosted agents and workflows.",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "publisher": "vegaduta",
   "icon": "media/icon.png",
   "license": "Apache-2.0",

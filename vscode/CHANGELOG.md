@@ -12,6 +12,25 @@ packaged as `.vsix` but never published to the Marketplace.
 
 Nothing yet.
 
+## [0.5.0] - 2026-09-18
+
+### Changed
+
+- The on-device model panel lays out each model's name, size and action
+  cleanly, and a model that is starting shows a moving progress bar instead of
+  an empty one.
+- When the editor restarts or moves its local model server, the chat picks up
+  the new address straight away instead of after a 30-second cache.
+
+## [0.4.3] - 2026-09-18
+
+### Fixed
+
+- **"On-device off" was a dead end.** The chip now reads "On-device: set up"
+  (or shows the model when one is ready) and is always clickable: it opens the
+  model panel, or - where this editor has no built-in engine - step-by-step
+  setup for a free local model server.
+
 ## [0.4.2] - 2026-09-18
 
 ### Fixed
