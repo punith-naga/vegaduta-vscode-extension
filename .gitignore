@@ -1,0 +1,5 @@
+# Belt-and-braces on top of vscode/.gitignore and shared/.gitignore.
+node_modules/
+dist/
+*.vsix
+*.zip

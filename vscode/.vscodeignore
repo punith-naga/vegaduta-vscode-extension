@@ -1,0 +1,35 @@
+# Everything the .vsix does NOT need. Keep this tight: the packaged bundle is
+# already ~2.5MB of which media/webview/chat.js (the shared chat bundle, WebLLM
+# included) is ~6.6MB uncompressed - nothing else may pile on top of it.
+#
+# What SHIPS: package.json, README.md, CHANGELOG.md, LICENSE, dist/extension.js,
+# media/** (icon.png, icon.svg, webview/). Everything below is excluded.
+
+# Editor/IDE scratch. .idea/** is here because a stray JetBrains folder in this
+# directory really did end up inside a published .vsix (fixed 2026-08-14).
+.vscode/**
+.idea/**
+
+# Sources and build inputs - the extension host is bundled into dist/ by
+# esbuild, and the webview is copied in pre-built from clients/shared.
+src/**
+test/**
+**/*.ts
+esbuild.mjs
+vitest.config.mjs
+tsconfig.json
+
+# Source maps: ~120KB of extension map plus whatever the webview bundle carries.
+# Useless to an installed user; stack traces from the wild come in as issues,
+# not as locally symbolicated traces.
+**/*.map
+
+# Dependency tree. `vsce package --no-dependencies` skips node_modules anyway;
+# this is the belt to that braces, and covers a plain `vsce package` too.
+node_modules/**
+package-lock.json
+
+# Repo/packaging leftovers.
+.gitignore
+.vscodeignore
+*.vsix

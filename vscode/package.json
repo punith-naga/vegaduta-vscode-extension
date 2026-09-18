@@ -1,0 +1,479 @@
+{
+  "name": "vegaduta-vscode",
+  "displayName": "VegaDuta",
+  "description": "Free AI coding help that runs on your own machine - chat, inline completions, Explain/Fix/Refactor, code review, commit messages and a coding agent - with no account and no quota. Sign in to add your VegaDuta workspace's hosted agents and workflows.",
+  "version": "0.4.2",
+  "publisher": "vegaduta",
+  "icon": "media/icon.png",
+  "license": "Apache-2.0",
+  "pricing": "Free",
+  "homepage": "https://vegaduta.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/punith-naga/vegaduta-vscode-extension.git",
+    "directory": "vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/punith-naga/vegaduta-vscode-extension/issues"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "AI",
+    "Chat",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "ai",
+    "code completion",
+    "code review",
+    "commit message",
+    "local llm",
+    "ollama",
+    "llama.cpp",
+    "webllm",
+    "offline"
+  ],
+  "galleryBanner": {
+    "color": "#08090f",
+    "theme": "dark"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:vegaduta.chat",
+    "onCommand:vegaduta.signIn",
+    "onCommand:vegaduta.signOut",
+    "onCommand:vegaduta.pasteApiKey",
+    "onCommand:vegaduta.chatWithAgent",
+    "onCommand:vegaduta.runWorkflow",
+    "onCommand:vegaduta.explainSelection",
+    "onCommand:vegaduta.fixSelection",
+    "onCommand:vegaduta.refactorSelection",
+    "onCommand:vegaduta.generateTests",
+    "onCommand:vegaduta.addDocumentation",
+    "onCommand:vegaduta.explainSelectionLocal",
+    "onCommand:vegaduta.fixSelectionLocal",
+    "onCommand:vegaduta.refactorSelectionLocal",
+    "onCommand:vegaduta.toggleCompletions",
+    "onCommand:vegaduta.setUpCodingAgent",
+    "onCommand:vegaduta.downloadModel",
+    "onCommand:vegaduta.reviewChanges",
+    "onCommand:vegaduta.generateCommitMessage",
+    "onCommand:vegaduta.explainProblem",
+    "onCommand:vegaduta.startCodingTask",
+    "onCommand:vegaduta.togglePrivateMode"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vegaduta",
+          "title": "VegaDuta",
+          "icon": "media/activitybar.png"
+        }
+      ]
+    },
+    "views": {
+      "vegaduta": [
+        {
+          "type": "webview",
+          "id": "vegaduta.chat",
+          "name": "Chat"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vegaduta.startCodingTask",
+        "title": "Start a Coding Task",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.setUpCodingAgent",
+        "title": "Set Up the Coding Agent",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.setAgentApiKey",
+        "title": "Set Agent API Key",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.signIn",
+        "title": "Sign In",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.signOut",
+        "title": "Sign Out",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.pasteApiKey",
+        "title": "Use API Key (vmcp_) Instead of Signing In",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.chatWithAgent",
+        "title": "Chat with Agent\u2026",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.runWorkflow",
+        "title": "Run Workflow\u2026",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.explainSelection",
+        "title": "Explain Selection",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.fixSelection",
+        "title": "Fix Selection",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.refactorSelection",
+        "title": "Refactor Selection",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.generateTests",
+        "title": "Write Tests for Selection",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.addDocumentation",
+        "title": "Add Docs to Selection",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.reviewChanges",
+        "title": "Review My Changes",
+        "category": "VegaDuta",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "vegaduta.generateCommitMessage",
+        "title": "Generate Commit Message",
+        "category": "VegaDuta",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "vegaduta.explainProblem",
+        "title": "Explain This Problem",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.explainSelectionLocal",
+        "title": "Explain Selection (Local \u00b7 WebLLM)",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.fixSelectionLocal",
+        "title": "Fix Selection (Local \u00b7 WebLLM)",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.refactorSelectionLocal",
+        "title": "Refactor Selection (Local \u00b7 WebLLM)",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.toggleCompletions",
+        "title": "Toggle Inline Completions",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.downloadModel",
+        "title": "Download an On-Device Model",
+        "category": "VegaDuta"
+      },
+      {
+        "command": "vegaduta.togglePrivateMode",
+        "title": "Toggle Private Mode",
+        "category": "VegaDuta",
+        "icon": "$(lock)"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "vegaduta.localSubmenu",
+        "label": "VegaDuta: Run Locally (WebLLM)"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "vegaduta.explainSelection",
+          "when": "editorHasSelection",
+          "group": "vegaduta@1"
+        },
+        {
+          "command": "vegaduta.fixSelection",
+          "when": "editorHasSelection",
+          "group": "vegaduta@2"
+        },
+        {
+          "command": "vegaduta.refactorSelection",
+          "when": "editorHasSelection",
+          "group": "vegaduta@3"
+        },
+        {
+          "command": "vegaduta.generateTests",
+          "when": "editorHasSelection",
+          "group": "vegaduta@4"
+        },
+        {
+          "command": "vegaduta.addDocumentation",
+          "when": "editorHasSelection",
+          "group": "vegaduta@5"
+        },
+        {
+          "submenu": "vegaduta.localSubmenu",
+          "when": "editorHasSelection",
+          "group": "vegaduta@6"
+        },
+        {
+          "command": "vegaduta.reviewChanges",
+          "group": "vegaduta@7",
+          "when": "gitOpenRepositoryCount != 0"
+        }
+      ],
+      "vegaduta.localSubmenu": [
+        {
+          "command": "vegaduta.explainSelectionLocal",
+          "when": "editorHasSelection",
+          "group": "vegaduta@1"
+        },
+        {
+          "command": "vegaduta.fixSelectionLocal",
+          "when": "editorHasSelection",
+          "group": "vegaduta@2"
+        },
+        {
+          "command": "vegaduta.refactorSelectionLocal",
+          "when": "editorHasSelection",
+          "group": "vegaduta@3"
+        }
+      ],
+      "scm/title": [
+        {
+          "command": "vegaduta.generateCommitMessage",
+          "when": "scmProvider == git",
+          "group": "navigation"
+        },
+        {
+          "command": "vegaduta.reviewChanges",
+          "when": "scmProvider == git",
+          "group": "vegaduta@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "vegaduta.generateTests",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "vegaduta.addDocumentation",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "vegaduta.explainProblem",
+          "when": "editorIsOpen"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "VegaDuta",
+      "properties": {
+        "vegaduta.environment": {
+          "type": "string",
+          "enum": [
+            "staging",
+            "production",
+            "custom"
+          ],
+          "default": "production",
+          "enumDescriptions": [
+            "vegaduta.xyz (stage/QA)",
+            "vegaduta.ai (production)",
+            "Self-hosted - set vegaduta.customApiBase and vegaduta.customAuthBase"
+          ],
+          "description": "Which VegaDuta deployment to talk to."
+        },
+        "vegaduta.customApiBase": {
+          "type": "string",
+          "default": "",
+          "description": "API origin for the custom environment, e.g. https://api.example.com. Used only when vegaduta.environment is \"custom\"."
+        },
+        "vegaduta.customAuthBase": {
+          "type": "string",
+          "default": "",
+          "description": "Keycloak origin for the custom environment, e.g. https://auth.example.com. Used only when vegaduta.environment is \"custom\"."
+        },
+        "vegaduta.completions.provider": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "local",
+            "hosted",
+            "off"
+          ],
+          "default": "auto",
+          "description": "Inline completion source. auto = the on-device engine when one is ready (a downloaded WebLLM model or a local Ollama-compatible server), otherwise the platform; local = on-device only; hosted = the platform's fill-in-the-middle endpoint, metered under your tenant budget (needs sign-in); off = disabled."
+        },
+        "vegaduta.edge.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow the chat view to start the on-device engine for chat, completions and quick actions. Two backends: a WebLLM model running on your GPU inside the panel (download it from the panel's engine chip or \"VegaDuta: Download an On-Device Model\"; nothing downloads by itself), and an OpenAI-compatible server you run (Ollama / LM Studio / llama.cpp) at vegaduta.ollama.baseUrl."
+        },
+        "vegaduta.ollama.baseUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Origin of your local OpenAI-compatible server for on-device chat, completions and quick actions. Empty = http://127.0.0.1:11434 (Ollama's default). LM Studio is usually http://127.0.0.1:1234. Applied the next time the chat view opens."
+        },
+        "vegaduta.agent.baseUrl": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI-compatible endpoint the coding agent talks to. Empty = auto-discovery: whichever local server is actually running on 127.0.0.1 (Ollama 11434, LM Studio 1234, llama.cpp 8080), found once per session and needing no key. Set it to a provider origin (e.g. https://api.groq.com/openai) to use your own key instead. \"VegaDuta: Set Up the Coding Agent\" reports what discovery found.",
+          "scope": "machine"
+        },
+        "vegaduta.agent.model": {
+          "type": "string",
+          "default": "",
+          "description": "Model id for the coding agent. Empty = the first model the server lists whose name is known to call tools, else the server's first model. It MUST support tool calling - qwen2.5-coder, llama3.1, mistral-nemo and devstral do.",
+          "scope": "machine"
+        },
+        "vegaduta.agent.maxSteps": {
+          "type": "number",
+          "default": 60,
+          "minimum": 1,
+          "maximum": 300,
+          "description": "Hard ceiling on agent loop iterations for one task. A bound is a safety property, not a tuning knob - raise it deliberately.",
+          "scope": "machine"
+        },
+        "vegaduta.agent.autoApproveEdits": {
+          "type": "boolean",
+          "default": false,
+          "description": "Apply the agent's file edits without asking each time. Off by default: this extension will not edit your files unattended unless you say so.",
+          "scope": "machine"
+        },
+        "vegaduta.agent.autoApproveCommands": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run the agent's shell commands without asking each time. Off by default. Turning this on lets a model run arbitrary commands on your machine.",
+          "scope": "machine"
+        }
+      }
+    },
+    "walkthroughs": [
+      {
+        "id": "vegaduta.gettingStarted",
+        "title": "Get started with VegaDuta",
+        "description": "Free on-device AI in two clicks, reviews and commit messages, the coding agent, then your workspace's agents.",
+        "steps": [
+          {
+            "id": "vegaduta.step.downloadModel",
+            "title": "Run a model on your machine",
+            "description": "Open the VegaDuta panel and click the engine chip to download a small model that runs on your GPU. Chat, Explain/Fix/Refactor and inline completions then work with no account and nothing sent anywhere.\n[Download an On-Device Model](command:vegaduta.downloadModel)",
+            "media": {
+              "markdown": "media/walkthrough/on-device.md"
+            },
+            "completionEvents": [
+              "onCommand:vegaduta.downloadModel"
+            ]
+          },
+          {
+            "id": "vegaduta.step.reviewAndCommit",
+            "title": "Review changes and write commit messages",
+            "description": "Get a review of your uncommitted changes, a drafted commit message in the Source Control box (you still commit), and a plain-language explanation of any error from its lightbulb.\n[Review My Changes](command:vegaduta.reviewChanges)",
+            "media": {
+              "markdown": "media/walkthrough/review-and-commit.md"
+            },
+            "completionEvents": [
+              "onCommand:vegaduta.reviewChanges",
+              "onCommand:vegaduta.generateCommitMessage"
+            ]
+          },
+          {
+            "id": "vegaduta.step.codingAgent",
+            "title": "Set up the coding agent",
+            "description": "A multi-step agent that reads, searches, edits and runs commands in this workspace against a local server (Ollama / LM Studio) or your own API key. Every edit shows a diff first; every command asks.\n[Set Up the Coding Agent](command:vegaduta.setUpCodingAgent)",
+            "media": {
+              "markdown": "media/walkthrough/coding-agent.md"
+            },
+            "completionEvents": [
+              "onCommand:vegaduta.setUpCodingAgent"
+            ]
+          },
+          {
+            "id": "vegaduta.step.completions",
+            "title": "Turn on inline completions",
+            "description": "Fill-in-the-middle suggestions in every language, from the on-device engine when it is ready or the platform when you are signed in.\n[Toggle Inline Completions](command:vegaduta.toggleCompletions)",
+            "media": {
+              "markdown": "media/walkthrough/completions.md"
+            },
+            "completionEvents": [
+              "onCommand:vegaduta.toggleCompletions"
+            ]
+          },
+          {
+            "id": "vegaduta.step.toolkitAndPrivacy",
+            "title": "Use the Toolkit, or go private",
+            "description": "Ready-made recipes for your role - developer, tester, reviewer, architect, product/BA or DevOps - plus Code Tour, Rubber Duck, Second Opinion, Ask the team and Machine Check in the panel. Private Mode keeps every prompt, file and search query on this machine; VS Code enforces it too.\n[Toggle Private Mode](command:vegaduta.togglePrivateMode)",
+            "media": {
+              "markdown": "media/walkthrough/toolkit-and-privacy.md"
+            },
+            "completionEvents": [
+              "onCommand:vegaduta.togglePrivateMode"
+            ]
+          },
+          {
+            "id": "vegaduta.step.signIn",
+            "title": "Sign in for your tenant's agents (optional)",
+            "description": "Chat with the agents and run the workflows your VegaDuta tenant already has. Uses the OAuth device flow, so it works over Remote/SSH/WSL.\n[Sign In](command:vegaduta.signIn)",
+            "media": {
+              "markdown": "media/walkthrough/sign-in.md"
+            },
+            "completionEvents": [
+              "onCommand:vegaduta.signIn"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "npm --prefix ../../web exec -- vitest run --root . --globals --environment node",
+    "package": "vsce package --no-dependencies",
+    "publish": "vsce publish --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.6.0"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "The coding agent runs commands and edits files. In an untrusted folder it stays off, and the agent settings are machine-scoped so a repository cannot enable it, redirect the model endpoint, or disable the approval prompts.",
+      "restrictedConfigurations": [
+        "vegaduta.agent.baseUrl",
+        "vegaduta.agent.model",
+        "vegaduta.agent.maxSteps",
+        "vegaduta.agent.autoApproveEdits",
+        "vegaduta.agent.autoApproveCommands"
+      ]
+    }
+  }
+}
