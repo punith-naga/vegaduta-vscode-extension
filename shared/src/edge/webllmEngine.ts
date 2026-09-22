@@ -44,6 +44,12 @@ import type {
 import type { EdgeHost } from "./host";
 import { fetchManifest } from "./manifest";
 
+// Import extraordinary enhancements
+import { enhanceWebLlmEngine, createWebLlmOrchestrator, type WebLlmOrchestratorConfig } from "./webllmOrchestrator";
+import { createFreeCopilotEngine, type FreeCopilotEngine, type CopilotConfig } from "./webllmCopilot";
+import { createUltimateAICodingAssistant, type UltimateAICodingAssistant, type AdvancedCopilotConfig } from "./webllmAdvancedCopilot";
+import { createClaudeBridgeServer, type ClaudeBridgeServer, type ClaudeBridgeConfig, createClaudeDesktopIntegrator, type ClaudeDesktopIntegrator } from "./webllmClaudeBridge";
+
 // ---------------------------------------------------------------------------
 // Context budget (D-9 port - same numbers, same estimator)
 // ---------------------------------------------------------------------------
@@ -295,7 +301,13 @@ export interface WebLlmLocalEngine extends LocalEngine {
 
 export function createWebLlmEngine(
   host: EdgeHost,
-  onStatus?: (status: LocalEngineStatus) => void
+  onStatus?: (status: LocalEngineStatus) => void,
+  enableExtraordinaryEnhancements: boolean = false,
+  orchestratorConfig?: WebLlmOrchestratorConfig,
+  enableFreeCopilot: boolean = false,
+  copilotConfig?: CopilotConfig,
+  enableUltimateAssistant: boolean = false,
+  ultimateConfig?: AdvancedCopilotConfig
 ): WebLlmLocalEngine {
   // One loaded model at a time, engine handle reused across turns.
   let engineInstance: MLCEngineInterface | null = null;
@@ -895,7 +907,7 @@ export function createWebLlmEngine(
     }
   }
 
-  return {
+  const baseEngine = {
     id: "webllm",
     probe,
     status: () => status,
@@ -904,4 +916,51 @@ export function createWebLlmEngine(
     listModels,
     deleteModel,
   };
+
+  // Apply extraordinary enhancements if enabled
+  let finalEngine = baseEngine;
+
+  if (enableExtraordinaryEnhancements) {
+    try {
+      const enhancedEngine = enhanceWebLlmEngine(baseEngine, host, orchestratorConfig || {});
+      // Ensure the enhanced engine has all required methods
+      finalEngine = {
+        ...baseEngine,
+        ...enhancedEngine,
+        id: "webllm", // Ensure ID remains webllm
+        download: baseEngine.download, // Preserve original download method
+        listModels: baseEngine.listModels, // Preserve original listModels method
+        deleteModel: baseEngine.deleteModel, // Preserve original deleteModel method
+      } as WebLlmLocalEngine;
+    } catch (error) {
+      console.error("Failed to apply extraordinary enhancements, falling back to base engine:", error);
+      finalEngine = baseEngine;
+    }
+  }
+
+  // Initialize Free Copilot if enabled
+  if (enableFreeCopilot) {
+    try {
+      const copilotEngine = createFreeCopilotEngine(host, copilotConfig || {});
+      // Attach copilot functionality to the engine
+      (finalEngine as any).copilot = copilotEngine;
+      console.log("Free Copilot engine initialized successfully");
+    } catch (error) {
+      console.error("Failed to initialize Free Copilot:", error);
+    }
+  }
+
+  // Initialize Ultimate AI Coding Assistant if enabled
+  if (enableUltimateAssistant) {
+    try {
+      const ultimateAssistant = createUltimateAICodingAssistant(host, finalEngine, ultimateConfig || {});
+      // Attach ultimate assistant functionality to the engine
+      (finalEngine as any).ultimate = ultimateAssistant;
+      console.log("Ultimate AI Coding Assistant initialized successfully");
+    } catch (error) {
+      console.error("Failed to initialize Ultimate AI Coding Assistant:", error);
+    }
+  }
+
+  return finalEngine;
 }
