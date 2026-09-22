@@ -666,9 +666,20 @@ export class AdvancedMemoryManager {
     const lastPart = content.slice(-Math.floor(targetLength / 2));
     const compressedContent = `${firstPart}\n[... ${content.length - targetLength} characters compressed ...]\n${lastPart}`;
 
+    return { ...msg, content: compressedContent } as ChatCompletionMessageParam;
+  }
+
+  getContextStatistics(): {
+    compressionEnabled: boolean;
+    compressionRatio: number;
+    semanticCacheSize: number;
+    compressionCacheSize: number;
+  } {
     return {
-      role: msg.role,
-      content: compressedContent,
+      compressionEnabled: this.compressionConfig.enabled,
+      compressionRatio: this.compressionConfig.compressionRatio,
+      semanticCacheSize: this.semanticCache.size,
+      compressionCacheSize: this.compressionCache.size,
     };
   }
 

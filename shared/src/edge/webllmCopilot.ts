@@ -39,7 +39,7 @@ interface CodeCompletionSuggestion {
   };
 }
 
-interface CopilotConfig {
+export interface CopilotConfig {
   enableCodeCompletion: boolean;
   enableCodeSearch: boolean;
   enableCommandExecution: boolean;
@@ -101,6 +101,7 @@ export class FreeCopilotEngine {
       enableCodeExecution: this.config.enableCommandExecution,
       enableFileIndexing: this.config.enableCodeSearch,
       enableSemanticSearch: this.config.enableCodeSearch,
+      defaultTimeout: 10000,
       requireConfirmationForExecution: this.config.requireConfirmation,
     });
 
@@ -117,8 +118,12 @@ export class FreeCopilotEngine {
 
     // Initialize advanced system for intelligent routing
     const advancedSystem = createAdvancedWebLlmEngine(host, {
-      enableIntelligentRouting: true,
+      enableEnsemble: false,
       enableMemoryCompression: true,
+      enableDynamicTuning: false,
+      enableIntelligentRouting: true,
+      ensembleStrategy: "adaptive",
+      maxEnsembleModels: 1,
     });
 
     this.modelRouter = advancedSystem.modelRouter;

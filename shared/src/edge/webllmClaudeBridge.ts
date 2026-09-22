@@ -3,10 +3,11 @@
 // This creates a local server that mimics the Anthropic API format but uses WebLLM under the hood
 
 import type { EdgeHost } from "./host";
-import type { EngineGenerateRequest, EngineGenerateResult } from "./engine";
-import type { ManifestModel, EdgeCapabilities } from "./capabilities";
+import type { ChatHistoryMessage, EngineGenerateRequest, EngineGenerateSuccess } from "./engine";
+import type { ManifestModel } from "./capabilities";
 import { createWebLlmEngine, type WebLlmLocalEngine } from "./webllmEngine";
-import { detectCapabilities, selectBestModel, fetchManifest } from "./capabilities";
+import { detectCapabilities, selectBestModel } from "./capabilities";
+import { fetchManifest } from "./manifest";
 
 // ---------------------------------------------------------------------------
 // Claude API Format Compatibility
@@ -44,9 +45,8 @@ interface ClaudeResponse {
 interface ClaudeStreamChunk {
   type: "message_start" | "content_block_start" | "content_block_delta" | "content_block_stop" | "message_delta" | "message_stop";
   index?: number;
-  delta?: { type: "text_delta"; text: string };
+  delta?: { type: "text_delta"; text: string } | { stop_reason: string; stop_sequence?: string };
   message?: ClaudeResponse;
-  delta?: { stop_reason: string; stop_sequence?: string };
   usage?: { output_tokens: number };
 }
 
@@ -54,7 +54,7 @@ interface ClaudeStreamChunk {
 // Claude-Compatible Server
 // ---------------------------------------------------------------------------
 
-interface ClaudeBridgeConfig {
+export interface ClaudeBridgeConfig {
   serverPort: number;
   serverHost: string;
   enableStreaming: boolean;
@@ -343,8 +343,8 @@ export class ClaudeBridgeServer {
     }
 
     // Build history from assistant messages
-    const history = assistantMessages.map(msg => ({
-      role: msg.role,
+    const history: ChatHistoryMessage[] = assistantMessages.map(msg => ({
+      role: "assistant" as const,
       content: typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content),
     }));
 
@@ -418,7 +418,7 @@ export class ClaudeBridgeServer {
 
     // Cache the result
     this.projectAnalysisCache.set(cacheKey, {
-      analysis,
+      analysis: analysis.text,
       timestamp: Date.now(),
       structure: analysis.structure,
     });
@@ -525,7 +525,7 @@ Please analyze this project structure and provide:
   // ---------------------------------------------------------------------------
 
   private isToolUseRequest(request: ClaudeRequest): boolean {
-    return request.tools && request.tools.length > 0;
+    return !!request.tools && request.tools.length > 0;
   }
 
   private async handleToolUse(
@@ -535,12 +535,15 @@ Please analyze this project structure and provide:
     if (!this.config.enableTools) {
       throw new Error("Tools are disabled");
     }
+    const engine = this.webllmEngine;
+    if (!engine) {
+      throw new Error("WebLLM engine not initialized");
+    }
 
     // For now, we'll simulate tool use
     // In a real implementation, this would execute actual tools
 
     const tools = request.tools || [];
-    const toolChoice = request.tool_choice;
 
     // Convert Claude request to WebLLM and let it decide about tools
     const webllmRequest = this.convertToWebLLMRequest(request);
@@ -558,7 +561,7 @@ END_TOOL
 
 Then continue with your response after the tool output.`;
 
-    const webllmResponse = await this.webllmEngine.generate(webllmRequest);
+    const webllmResponse = await engine.generate(webllmRequest);
 
     if (!webllmResponse.ok) {
       throw new Error(`Tool use failed: ${webllmResponse.reason}`);
@@ -585,7 +588,7 @@ Then continue with your response after the tool output.`;
     // Generate final response with tool results
     const finalPrompt = `${webllmRequest.prompt}\n\nTool Results:\n${JSON.stringify(toolResults, null, 2)}\n\nPlease provide your response based on the tool results.`;
 
-    const finalResponse = await this.webllmEngine.generate({
+    const finalResponse = await engine.generate({
       ...webllmRequest,
       prompt: finalPrompt,
     });
@@ -608,7 +611,7 @@ Then continue with your response after the tool output.`;
     };
   }
 
-  private parseToolUses(text: string): Array<{ tool: string; input: any }>[] {
+  private parseToolUses(text: string): Array<{ tool: string; input: any }> {
     const toolUses: Array<{ tool: string; input: any }> = [];
     const lines = text.split("\n");
     let currentTool: any = null;

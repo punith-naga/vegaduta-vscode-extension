@@ -12,6 +12,46 @@ packaged as `.vsix` but never published to the Marketplace.
 
 Nothing yet.
 
+## [0.6.0] - 2026-09-22
+
+### Added
+
+- **Opt-in on-device engine extensions** in the shared edge layer
+  (`shared/src/edge/webllm*.ts`). All of them are OFF by default and the
+  existing WebLLM path is byte-for-byte unchanged unless a host passes the new
+  `createWebLlmEngine(...)` flags:
+  - `webllmOrchestrator` / `webllmAdvanced`: performance tracking, an
+    intelligent model router (task complexity + use case + history), context
+    compression for long histories, and adaptive sampling parameters.
+  - `webllmCopilot`: a Copilot-style layer - context-aware completions with a
+    30s cache, codebase search over the file indexer, code explanation, and
+    task planning.
+  - `webllmAdvancedCopilot`: multi-file edit proposals with diffs, an agent
+    loop with plan/execute/auto-correct, unit-test generation, code review
+    with severity scoring, documentation generation, working sets, and a
+    terminal command wrapper.
+  - `webllmTools`: sandboxed JS execution, file indexing with symbol
+    extraction, relevance-ranked search, and a tool registry.
+  - `webllmDeveloper`: profiler, monitoring dashboard with alerts, debug
+    session state, and usage analytics.
+  - `webllmMultimodal`: input pipeline for text/image/audio/video/code/
+    document plus an importance-ranked context manager with semantic search.
+  - `webllmCollaborative`: WebRTC-based P2P scaffolding for model shard
+    sharing, federated gradient aggregation, and peer trust scores.
+  - `webllmClaudeBridge`: Anthropic-Messages-API-shaped request/response
+    translation over the local WebLLM engine, for hosts that want to point a
+    Claude-compatible client at a free local model.
+
+### Notes
+
+- Several of these modules are scaffolding with clearly marked placeholder
+  implementations (file reads, shell execution, P2P signalling, OCR/ASR). They
+  compile, are type-checked, and are wired behind flags, but are not yet
+  surfaced as VS Code commands or settings.
+- `vscode/` itself has no new commands or settings in this release; the
+  shipped `.vsix` grows only because the shared webview bundle now carries
+  these modules.
+
 ## [0.5.1] - 2026-09-18
 
 ### Changed

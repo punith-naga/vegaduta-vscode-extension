@@ -108,8 +108,8 @@ export class PerformanceProfiler {
     return profile;
   }
 
-  recordOperation(name: string, metadata: Record<string, unknown> = {}): void {
-    if (!this.currentProfile) return;
+  recordOperation(name: string, metadata: Record<string, unknown> = {}): (() => void) | undefined {
+    if (!this.currentProfile) return undefined;
 
     const operation = {
       name,
@@ -262,6 +262,14 @@ interface DashboardConfig {
   };
 }
 
+interface DashboardAlert {
+  timestamp: number;
+  type: string;
+  message: string;
+  severity: "info" | "warning" | "error";
+  metrics: DashboardMetrics;
+}
+
 export class MonitoringDashboard {
   private metricsHistory: DashboardMetrics[] = [];
   private config: DashboardConfig = {
@@ -276,13 +284,7 @@ export class MonitoringDashboard {
     },
   };
   private updateInterval: ReturnType<typeof setInterval> | null = null;
-  private alerts: Array<{
-    timestamp: number;
-    type: string;
-    message: string;
-    severity: "info" | "warning" | "error";
-    metrics: DashboardMetrics;
-  }> = [];
+  private alerts: DashboardAlert[] = [];
   private host: EdgeHost;
   private engineStatus: LocalEngineStatus = { state: "unavailable" };
   private activeGenerations = 0;
@@ -447,7 +449,7 @@ export class MonitoringDashboard {
     }
   }
 
-  private addAlert(alert: DashboardMetrics): void {
+  private addAlert(alert: DashboardAlert): void {
     this.alerts.push(alert);
 
     // Keep only recent alerts
@@ -492,7 +494,7 @@ export class MonitoringDashboard {
     return this.metricsHistory.filter(m => m.timestamp > cutoff);
   }
 
-  getAlerts(severity?: "info" | "warning" | "error"): Array<DashboardMetrics> {
+  getAlerts(severity?: "info" | "warning" | "error"): DashboardAlert[] {
     if (severity) {
       return this.alerts.filter(a => a.severity === severity);
     }

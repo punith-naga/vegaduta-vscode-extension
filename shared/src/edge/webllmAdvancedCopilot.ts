@@ -12,7 +12,7 @@ import { createMultiModalSystem, type AdvancedContextManager } from "./webllmMul
 // Advanced Feature Configuration
 // ---------------------------------------------------------------------------
 
-interface AdvancedCopilotConfig {
+export interface AdvancedCopilotConfig {
   // Multi-file editing
   enableMultiFileEditing: boolean;
   maxFilesPerEdit: number;
@@ -346,7 +346,7 @@ export class AgentMode {
 
           // Auto-correct if enabled and step failed
           if (!result.success && this.config.agentAutoCorrect) {
-            const correction = await this.autoCorrect(step, result.error, baseEngine);
+            const correction = await this.autoCorrect(step, result.error ?? "Step execution failed", baseEngine);
             if (correction) {
               execution.steps.push(...correction);
             }
@@ -1270,6 +1270,8 @@ export class UltimateAICodingAssistant {
       enableCodeExecution: this.config.enableAgentMode,
       enableFileIndexing: true,
       enableSemanticSearch: this.config.enableAdvancedContext,
+      defaultTimeout: this.config.terminalTimeout,
+      requireConfirmationForExecution: true,
     });
 
     const multiModalSystem = createMultiModalSystem(host, {
